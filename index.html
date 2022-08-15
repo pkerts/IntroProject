@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Canvas tutorial</title>
+    <button onclick="restore();">Restore</button>
+    <label for="colorpicker">Background Color Picker:</label>
+    <input type="color" id="colorpicker" value="#000000">
+    <label for="textbox">Type text:</label>
+    <input type="text" id="textbox" />
+    <label for="fontcolorpicker">Font Color Picker:</label>
+    <input type="color" id="fontcolorpicker" value="#FFFFFF">
+    <button onclick="textLeft();">&larr;</button>
+    <button onclick="textRight();">&rarr;</button>
+    <button onclick="textDown();">&darr;</button>
+    <button onclick="textUp();">&uarr;</button>
+    <button onclick="fontSizeDown();">Font Size Down</button>
+    <button onclick="fontSizeUp();">Font Size Up</button>
+    <label for="uploader">Select file:</label>
+    <input type="file" id="uploader" />
+    <button onclick="left();">&larr;</button>
+    <button onclick="right();">&rarr;</button>
+    <button onclick="down();">&darr;</button>
+    <button onclick="up();">&uarr;</button>
+    <button onclick="download();">Download</button>  
+    <body>
+        
+      <canvas id="canvas" width="700" height="700"></canvas>
+
+      <script>
+          const ctx = document.getElementById('canvas').getContext('2d');
+          const canvasWidth = document.getElementById('canvas').width;
+          const canvasHeight = document.getElementById('canvas').height;
+          const reader = new FileReader();
+          const img = new Image();
+
+          let xCoord = 0;
+          let yCoord = 0;
+          let text_xCoord = 5;
+          let text_yCoord = 30;
+          let fontSize = 30;
+          let backgroundColor = "#000000";
+          let fontColor = "#FFFFFF";
+          let inputText = "";
+
+          const colorpicker = document.getElementById('colorpicker');
+          colorpicker.addEventListener("change", updateBackground);
+
+          const fontcolorpicker = document.getElementById('fontcolorpicker');
+          fontcolorpicker.addEventListener("change", updateFontColor);
+
+          const textbox = document.getElementById('textbox');
+          textbox.addEventListener("change", updateText);
+
+          function restore() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, 700, 700);
+            inputText = "";
+            img.src = "";
+            backgroundColor = "#000000";
+            colorpicker.value = "#000000";
+            fontColor = "#FFFFFF";
+            fontcolorpicker.value = "#FFFFFF";
+            fontSize = 30;
+            text_xCoord = 5;
+            text_yCoord = 30;
+            textbox.value = "";
+          }
+
+          const uploadImage = (e) => {
+            reader.onload = () => {
+              img.onload = () => {
+                ctx.drawImage(img, xCoord, yCoord);
+              };
+              img.src = reader.result;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+          };
+          const imageLoader = document.getElementById('uploader');
+          imageLoader.addEventListener("input", uploadImage);
+
+          function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = backgroundColor;
+            ctx.fillRect(0, 0, 700, 700);
+
+            ctx.drawImage(img, xCoord, yCoord);
+
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            ctx.shadowBlur = 2;
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+
+            ctx.font = fontSize + 'px Times New Roman';
+            ctx.fillStyle = fontColor;
+            ctx.fillText(inputText, text_xCoord, text_yCoord);
+
+          }
+
+          function download() {
+            const image = canvas.toDataURL();
+            const link = document.createElement('a');
+            link.href = image;
+            link.download = 'image.png';
+            link.click();
+          }
+
+          function changeDraw() {
+            xCoord++;
+            draw();
+          }
+
+          function right() {
+            xCoord+=20;
+            draw();
+          }
+
+          function left() {
+            xCoord-=20;
+            draw();
+          }
+
+          function up() {
+            yCoord-=20;
+            draw();
+          }
+
+          function down() {
+            yCoord+=20;
+            draw();
+          }
+
+          function fontSizeUp() {
+            fontSize+=5;
+            draw();
+          }
+
+          function fontSizeDown() {
+            fontSize-=5;
+            draw();
+          }
+
+          function updateBackground() {
+            backgroundColor = colorpicker.value;
+            draw();
+          }
+
+          function updateText() {
+            inputText = textbox.value;
+            draw();
+          }
+
+          function updateFontColor() {
+            fontColor = fontcolorpicker.value;
+            draw();
+          }
+
+          function textRight() {
+            text_xCoord+=10;
+            draw();
+          }
+
+          function textLeft() {
+            text_xCoord-=10;
+            draw();
+          }
+
+          function textUp() {
+            text_yCoord-=10;
+            draw();
+          }
+
+          function textDown() {
+            text_yCoord+=10;
+            draw();
+          }
+        
+        draw();
+
+      </script>
+  
+</body>
+</html>
